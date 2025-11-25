@@ -42,24 +42,24 @@ Deploy the contents of the `dist/` folder (e.g., via Vercel or Netlify). Make su
 ┌────────────────────────────────────────────────────────────────────────┐
 │                                Client (Vite + React)                   │
 │                                                                        │
-│  ┌─────────────┐   ┌─────────────────┐   ┌──────────────────┐          │
-│  │ modules/    │   │ services/gemini │   │ context/Auth...  │          │
-│  │ Chat/Vision │──▶│ Google GenAI    │──▶│ Local auth store │          │
-│  └─────────────┘   └─────────────────┘   └──────────────────┘          │
+│  ┌─────────────┐   ┌────────────────────┐   ┌──────────────────┐       │
+│  │ modules/    │   │ services/wikipedia│   │ context/Auth...  │       │
+│  │ Chat/Vision │──▶│ Public data fetch │──▶│ Local auth store │       │
+│  └─────────────┘   └────────────────────┘   └──────────────────┘       │
 │         │                 │                         │                  │
 │         │                 │                         │                  │
 │         ▼                 ▼                         ▼                  │
-│  components/ UI   services/firebase (placeholder)   localStorage       │
+│  components/ UI     (future) AI proxy        localStorage              │
 └────────────────────────────────────────────────────────────────────────┘
 
 Backends / APIs:
-- Google Gemini (text, vision, imagen) via `@google/genai`
+- Wikipedia REST API for public summaries
 - Google Identity (planned) via `@react-oauth/google`
 
 Data Flow:
 1. User authenticates (local demo store → future: Google OAuth + backend).
 2. UI state stored in React Context + localStorage per user session.
-3. Chat / Vision / Imagine modules call `services/gemini`.
+3. Chat module pulls fallback knowledge from `services/wikipedia`; Vision/Imagine presently show placeholders until the AI backend is reintroduced.
 4. Responses rendered in components; chat history persisted per session.
 ```
 
@@ -68,7 +68,7 @@ Data Flow:
 - `app.tsx`: Shell layout, module routing, auth gating.
 - `components/`: Chat modules, auth form, shared UI widgets.
 - `context/AuthContext.tsx`: Local demo auth (password, OTP) and future Google hook-in.
-- `services/`: External APIs (`gemini.ts`) and placeholders for future backend calls.
+- `services/`: External APIs such as `wikipedia.ts`; hook in your own backend here when ready.
 - `types.ts`: Shared enums (modules) and data structures (chat sessions, messages).
 
 ## Notes
@@ -77,6 +77,6 @@ This project currently uses a local demo auth store. Before going public:
 
 1. Replace it with a real identity provider (Firebase/Supabase/Auth0).
 2. Move chat history and user data to a secure backend.
-3. Proxy Gemini requests server-side to avoid exposing API keys.
+3. When re-enabling private models, proxy those requests server-side to avoid exposing API keys.
 
 
