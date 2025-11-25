@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Send, Brain, Zap, Bot, User, PlusCircle } from 'lucide-react';
 import { ChatMessage, ChatSession } from '../types';
-import { generateThinkingResponse, generateQuickResponse } from '../services/gemini';
+import { fetchWikiSummary } from '../services/wikipedia';
 import ThinkingIndicator from './ThinkingIndicator';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../context/AuthContext';
@@ -158,9 +158,10 @@ const ModuleChatReason: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const responseText = isThinkingMode
-        ? await generateThinkingResponse(fullPrompt)
-        : await generateQuickResponse(fullPrompt);
+      const wiki = await fetchWikiSummary(input);
+      const responseText =
+        `${wiki.extract}\n\nSource: ${wiki.content_urls?.desktop?.page ?? "https://wikipedia.org"}` +
+        (isThinkingMode ? "\n\n(Deep thinking mode simulated with extended context.)" : "");
 
       updateSession(session.id, current => ({
         ...current,
@@ -173,8 +174,8 @@ const ModuleChatReason: React.FC = () => {
     } catch (error) {
       const message =
         error instanceof Error
-          ? error.message || "Sorry, I encountered an error processing your request."
-          : "Sorry, I encountered an error processing your request.";
+          ? error.message || "Sorry, I couldn't find relevant public information."
+          : "Sorry, I couldn't find relevant public information.";
       updateSession(session.id, current => ({
         ...current,
         messages: [...current.messages, { role: 'model', text: message }],
