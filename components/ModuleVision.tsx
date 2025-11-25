@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Upload, Image as ImageIcon, X, Sparkles, Loader2 } from 'lucide-react';
 import { VisionState } from '../types';
-import { analyzeImage } from '../services/gemini';
 import ReactMarkdown from 'react-markdown';
 
 const ModuleVision: React.FC = () => {
@@ -39,23 +38,13 @@ const ModuleVision: React.FC = () => {
     setState(prev => ({ ...prev, image: null, imageBase64: null, response: null }));
   };
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = () => {
     if (!state.imageBase64 || state.isLoading) return;
-
-    setState(prev => ({ ...prev, isLoading: true }));
-
-    try {
-      // Extract pure base64 data from data URL
-      const base64Data = state.imageBase64.split(',')[1];
-      const mimeType = state.imageBase64.split(';')[0].split(':')[1];
-
-      const responseText = await analyzeImage(base64Data, mimeType, state.prompt);
-      setState(prev => ({ ...prev, response: responseText }));
-    } catch (error) {
-      setState(prev => ({ ...prev, response: "Error analyzing image. Please try again." }));
-    } finally {
-      setState(prev => ({ ...prev, isLoading: false }));
-    }
+    setState(prev => ({
+      ...prev,
+      response: "Vision analysis is currently disabled because the Gemini integration has been removed.",
+      isLoading: false
+    }));
   };
 
   return (
@@ -128,9 +117,9 @@ const ModuleVision: React.FC = () => {
       <div className="flex-1 bg-gray-900 rounded-2xl border border-gray-800 p-6 overflow-y-auto max-h-full">
         <h3 className="text-lg font-medium text-gray-300 mb-4">Analysis Results</h3>
         {state.response ? (
-           <div className="prose prose-invert prose-emerald max-w-none">
+          <div className="prose prose-invert prose-emerald max-w-none">
             <ReactMarkdown>{state.response}</ReactMarkdown>
-           </div>
+          </div>
         ) : (
           <div className="h-full flex items-center justify-center text-gray-500 flex-col gap-3">
             <Sparkles className="w-12 h-12 opacity-20" />
