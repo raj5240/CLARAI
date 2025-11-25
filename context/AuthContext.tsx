@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
+
 interface StoredAccount {
     email: string;
     passwordHash: string;
