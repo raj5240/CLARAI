@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Palette, Wand2, Download, Loader2, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { ImagineState } from '../types';
-import { generateImage } from '../services/gemini';
 
 const ModuleImagine: React.FC = () => {
   const [state, setState] = useState<ImagineState>({
@@ -11,21 +10,10 @@ const ModuleImagine: React.FC = () => {
   });
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = async () => {
+  const handleGenerate = () => {
     if (!state.prompt.trim() || state.isLoading) return;
-
-    setState(prev => ({ ...prev, isLoading: true, generatedImageUrl: null }));
-    setError(null);
-
-    try {
-      const imageUrl = await generateImage(state.prompt);
-      setState(prev => ({ ...prev, generatedImageUrl: imageUrl }));
-    } catch (err: any) {
-      // Basic error handling to show user something went wrong
-      setError(err.message || "Failed to generate image. It might be due to safety filters or high demand.");
-    } finally {
-      setState(prev => ({ ...prev, isLoading: false }));
-    }
+    setState(prev => ({ ...prev, isLoading: false, generatedImageUrl: null }));
+    setError("Image generation is currently disabled because the Gemini integration has been removed.");
   };
 
   return (
@@ -36,7 +24,7 @@ const ModuleImagine: React.FC = () => {
           Imagine
         </h2>
         <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-          Turn your words into high-quality visuals using Google's latest Imagen model. Describe what you want to see in detail.
+          Turn your words into high-quality visuals. (Feature temporarily offline while we rework the image model integration.)
         </p>
 
         <div className="relative max-w-3xl mx-auto">
@@ -64,12 +52,12 @@ const ModuleImagine: React.FC = () => {
             )}
           </button>
         </div>
-         {error && (
-            <div className="mt-4 p-3 bg-red-900/30 border border-red-800/50 text-red-200 rounded-lg flex items-center gap-2 text-sm max-w-3xl mx-auto text-left">
-              <AlertCircle className="w-5 h-5 flex-shrink-0" />
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="mt-4 p-3 bg-red-900/30 border border-red-800/50 text-red-200 rounded-lg flex items-center gap-2 text-sm max-w-3xl mx-auto text-left">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            {error}
+          </div>
+        )}
       </div>
 
       {/* Output Area */}
@@ -77,8 +65,8 @@ const ModuleImagine: React.FC = () => {
         {state.isLoading ? (
           <div className="flex flex-col items-center gap-4">
             <div className="relative w-24 h-24">
-               <div className="absolute inset-0 rounded-full border-t-4 border-pink-500 animate-spin"></div>
-               <div className="absolute inset-3 rounded-full border-t-4 border-indigo-500 animate-spin-slow"></div>
+              <div className="absolute inset-0 rounded-full border-t-4 border-pink-500 animate-spin"></div>
+              <div className="absolute inset-3 rounded-full border-t-4 border-indigo-500 animate-spin-slow"></div>
             </div>
             <p className="text-pink-300 animate-pulse">Dreaming up your image...</p>
           </div>
