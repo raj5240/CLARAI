@@ -1,10 +1,9 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 
 const apiKey =
-  (typeof import.meta !== 'undefined' ? import.meta.env?.VITE_API_KEY : undefined) ||
   (globalThis as { process?: { env?: { API_KEY?: string } } }).process?.env?.API_KEY ||
   (globalThis as { API_KEY?: string }).API_KEY ||
-  "AIzaSyCLxaeC1L3uIevkZpmM0OJ168ICzrWi4Xw";
+  (typeof import.meta !== 'undefined' ? (import.meta as Record<string, any>)?.env?.VITE_API_KEY : undefined);
 
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
